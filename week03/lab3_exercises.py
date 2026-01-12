@@ -35,7 +35,6 @@ def celsius_to_fahrenheit(celsius):
         celsius_to_fahrenheit(0) returns 32.0
         celsius_to_fahrenheit(100) returns 212.0
     """
-    fahrenheit = 0
     fahrenheit = (celsius * 9/5) + 32
 
     return fahrenheit
@@ -62,7 +61,9 @@ def get_student_grade(grades, student_name):
         get_student_grade(grades, "Charlie") returns 0
     """
     # HINT: dictionary.get(key, default_value)
+
     grade = grades.get(student_name, 0)
+
     return grade
 
 
@@ -90,6 +91,7 @@ def format_person(name, age, city):
     # HINT: f"{variable}"
 
     formatted = f"Name: {name}, Age: {age}, City: {city}"
+
     return formatted
 
 
@@ -118,11 +120,8 @@ def format_person(name, age, city):
 # - Use len() to count numbers
 
 # TODO: Write the complete calculate_average function here
-
 def calculate_average(numbers):
-    if not numbers:
-        return 0.0
-    return sum(numbers) / len(numbers)
+    return (sum(numbers) / len(numbers))
 
 
 # ==========================================
@@ -147,9 +146,9 @@ def calculate_average(numbers):
 # - Use .lower() to convert to lowercase
 
 # TODO: Write the complete clean_filename function here
-
 def clean_filename(filename):
-    return filename.strip().lower()
+    return(filename.strip().lower())
+
 
 # ==========================================
 # EXERCISE 6: Count File Extensions (3 points)
@@ -174,14 +173,19 @@ def clean_filename(filename):
 # - Initialize count to 0 if extension was not in dictionary
 
 # TODO: Write the complete count_extensions function here
-
 def count_extensions(filenames):
-    counts = {}
-    for file in filenames:
-        if "." in file:
-            ext = file.split(".")[-1].lower()
-            counts[ext] = counts.get(ext, 0) + 1
-    return counts
+    ret = {}
+    count = 0
+    for ext in filenames:
+        ext = ext.split(".")[-1]
+        if ext not in ret:
+            count = 1
+            ret[ext] = count
+        else:
+            count += 1
+            ret[ext] = count
+    return ret
+
 
 # ==========================================
 # EXERCISE 7: Filter Passing Students (3 points)
@@ -199,9 +203,13 @@ def count_extensions(filenames):
 #   returns {"Alice": 85, "Charlie": 70}
 
 # TODO: Write the complete filter_passing_students function here
-
 def filter_passing_students(grades):
-    return {name: score for name, score in grades.items() if score >= 60}
+    passing_studens = {}
+    for student, score in grades.items():
+        if score >= 60:
+            passing_studens[student] = score
+    return passing_studens
+
 
 # ==========================================
 # EXERCISE 8: Analyze Numbers (3 points)
@@ -219,15 +227,8 @@ def filter_passing_students(grades):
 #   returns (10, 70, 40.0)
 
 # TODO: Write the complete analyze_numbers function here
-
 def analyze_numbers(numbers):
-    if not numbers:
-        return (None, None, None)
-    minimum = min(numbers)
-    maximum = max(numbers)
-    average = sum(numbers) / len(numbers)
-    return (minimum, maximum, average)
-
+    return (min(numbers), max(numbers), sum(numbers) / len(numbers))
 
 # ==========================================
 # EXERCISE 9: Read Numbers from File (3 points)
@@ -252,15 +253,13 @@ def analyze_numbers(numbers):
 # - Use 'with open(filename) as f:' to open the file
 
 # TODO: Write the complete read_numbers_from_file function here
-
 def read_numbers_from_file(filename):
     numbers = []
-    with open(filename) as f:
-        for line in f:
-            line = line.strip()
-            if line:
-                numbers.append(int(line))
+    with open(filename, "r") as f:
+        for number in f:
+            numbers.append(int(number.strip()))
     return numbers
+
 
 # ==========================================
 # SECTION C: ADVANCED INTEGRATION (13 points)
@@ -292,12 +291,12 @@ def read_numbers_from_file(filename):
 # - Unpack tuple: for item, (price, quantity) in cart.items():
 
 # TODO: Write the complete calculate_cart_total function here
-
 def calculate_cart_total(cart):
-    total = 0.0
-    for item, (price, quantity) in cart.items():
+    total = 0
+    for key, (price, quantity) in cart.items():
         total += price * quantity
     return total
+
 
 # ==========================================
 # EXERCISE 11: Generate Grade Report (5 points)
@@ -332,22 +331,21 @@ def calculate_cart_total(cart):
 # TODO: Write the complete generate_grade_report function here
 
 def generate_grade_report(scores):
-    def letter_grade(score):
-        if score >= 90:
-            return "A"
-        elif score >= 80:
-            return "B"
-        elif score >= 70:
-            return "C"
-        elif score >= 60:
-            return "D"
+    studens = ""
+    for key, value in scores.items():
+        if value >= 90:
+            letter = "A"
+        elif value >= 80:
+            letter = "B"
+        elif value >= 70:
+            letter = "C"
+        elif value >= 60:
+            letter = "D"
         else:
-            return "F"
+            letter = "F"
+        studens += f"Student: {key}, Score: {value}, Grade: {letter}\n"
+    return studens
 
-    report_lines = []
-    for name, score in scores.items():
-        report_lines.append(f"Student: {name}, Score: {score}, Grade: {letter_grade(score)}")
-    return "\n".join(report_lines)
 
 # ==========================================
 # EXERCISE 12: Analyze Log File (5 points)
@@ -390,22 +388,22 @@ def generate_grade_report(scores):
 # - Some levels might not appear in file - keep count at 0
 
 # TODO: Write the complete analyze_log_file function here
-
 def analyze_log_file(filename):
-    levels_count = {"ERROR": 0, "WARNING": 0, "INFO": 0}
-    total_lines = 0
+    line_count = 0
+    log_dict = {}
+    log_dict["levels"] = {}
     with open(filename) as f:
         for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            total_lines += 1
-            if ": " in line:
-                level, _ = line.split(": ", 1)
-                level = level.upper()
-                if level in levels_count:
-                    levels_count[level] += 1
-    return {"total_lines": total_lines, "levels": levels_count}
+            line_count += 1
+            log = line.strip().split(":")[0]
+            if log not in log_dict["levels"]:
+                log_dict["levels"][log] = 1
+            else:
+                log_dict["levels"][log] += 1
+        log_dict["total_lines"] = line_count
+
+    return log_dict
+
 
 # ==========================================
 # DO NOT MODIFY BELOW THIS LINE
