@@ -24,11 +24,11 @@ def exercise1():
         {'name': 'John', 'age': 20, 'height': 1.75, 'loves_programming': True}
     """
     # TODO: Create four variables with your information
-    your_name = "İlyas"  # Replace with your name
+    your_name = "ilyas"  # Replace with your name
     your_age = 21
-    your_height = 1.7
+    your_height = 1.70
     loves_programming = True
-
+    
     return {
         'name': your_name,
         'age': your_age,
@@ -59,6 +59,7 @@ def exercise2(first_name, last_name):
     
     return full_name
 
+
 # ==========================================
 # EXERCISE 3: Working with Numbers (5 points)
 # ==========================================
@@ -78,8 +79,8 @@ def exercise3(test1, test2, test3):
         exercise3(85, 92, 78) returns 85.0
     """
     # TODO: Calculate and return the average
-    average = 0
     average = (test1 + test2 + test3) / 3
+    
     return average
 
 
@@ -101,8 +102,8 @@ def exercise4(celsius):
         exercise4(25) returns 77.0
     """
     # TODO: Calculate and return fahrenheit
-    fahrenheit = 0
     fahrenheit = (celsius * 9/5) + 32
+    
     return fahrenheit
 
 
@@ -124,10 +125,9 @@ def exercise5(length, width):
         exercise5(12.5, 8.3) returns {'area': 103.75, 'perimeter': 41.6}
     """
     # TODO: Calculate area and perimeter
-    area = 0
-    perimeter = 0
     area = length * width
     perimeter = (length + width) * 2
+    
     return {'area': area, 'perimeter': perimeter}
 
 
@@ -151,12 +151,10 @@ def exercise6(item_price, quantity, tax_rate):
         {'subtotal': 119.96, 'tax': 8.3972, 'total': 128.3572}
     """
     # TODO: Calculate subtotal, tax, and total
-    subtotal = 0
-    tax = 0
-    total = 0
     subtotal = item_price * quantity
     tax = subtotal * tax_rate
-    total =  subtotal + tax
+    total = subtotal + tax
+    
     return {'subtotal': subtotal, 'tax': tax, 'total': total}
 
 
@@ -178,9 +176,9 @@ def exercise7(age):
         exercise7(20) returns "You can vote!"
     """
     # TODO: Use if-else to check voting eligibility
-    if age >= 18 :
+    if age >= 18:
         result = "You can vote!"
-    else :
+    else:
         result = "You cannot vote yet."
     return result
 
@@ -203,16 +201,17 @@ def exercise8(score):
         exercise8(85) returns "B"
     """
     # TODO: Use if-elif-else to determine letter grade
-    if score >= 90 :
+    if score >= 90:
         letter = "A"
-    elif score >= 80 :
+    elif score >= 80:
         letter = "B"
-    elif score >= 70 :
+    elif score >= 70:
         letter = "C"
-    elif score >= 60 :
+    elif score >= 60:
         letter = "D"
-    else :
+    else:
         letter = "F"
+    
     return letter
 
 
@@ -238,15 +237,15 @@ def exercise9(purchase_amount):
     discount_rate = 0
     discount_amount = 0
     final_price = 0
-    
-    if purchase_amount >= 100 :
-        discount_rate = 0.20
-    elif purchase_amount >= 50 :
-        discount_rate = 0.10
-    else :
-        discount_rate = 0.0
 
-    discount_amount =  purchase_amount * discount_rate
+    if purchase_amount >= 100:
+        discount_rate = 0.20
+    elif purchase_amount >= 50:
+        discount_rate = 0.10
+    else:
+        pass
+    
+    discount_amount = discount_rate * purchase_amount
     final_price = purchase_amount - discount_amount
 
     return {
