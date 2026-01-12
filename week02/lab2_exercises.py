@@ -29,7 +29,7 @@ def exercise1():
     """
     # TODO: Create any list with 5 shopping items
     # HINT: Make sure that the list contains exactly 5 "string" elements not integers.
-    shopping_list = ["milk", "eggs", "bread", "cheese", "apples"]
+    shopping_list = ['milk', 'eggs', 'bread', 'cheese', 'apples']
     
     return shopping_list
 
@@ -81,9 +81,6 @@ def exercise3(items, search_item):
     # TODO: Use len() and 'in' operator
     # HINT: You use dictionary if you want to return multiple values.
     # Don't change the return statement structure.
-
-    count = 0
-    found = False
 
     count = len(items)
     found = search_item in items
@@ -162,6 +159,7 @@ def exercise6(items):
     """
     # TODO: Use a for loop to create formatted strings
     # HINT: How do you combine (concat) strings with variables?
+
     result = []
     for item in items:
         result.append(f"Item: {item}")
@@ -188,9 +186,8 @@ def exercise7(numbers):
     """
     # TODO: Use accumulator pattern with a loop
     total = 0
-    for number in numbers :
+    for number in numbers:
         total += number
-    
     return total
 
 
@@ -214,10 +211,9 @@ def exercise8(items, target):
     """
     # TODO: Use a loop with a counter
     count = 0
-    for item in items :
-        if item == target :
+    for item in items:
+        if item == target:
             count += 1
-    
     return count
 
 
@@ -243,7 +239,6 @@ def exercise9(numbers, threshold):
     for number in numbers:
         if number > threshold:
             result.append(number)
-
     return result
 
 
@@ -268,9 +263,8 @@ def exercise10(start, end):
     # HINT: you convert a range to a list using list(range(...))
 
     result = []
-    for number in range(start, end + 1) :
-        result.append(number)
-
+    for i in range(start, end + 1):
+        result.append(i)
     return result
 
 
@@ -296,9 +290,8 @@ def exercise11(filename):
     """
     # TODO: Use 'with open()' to read file
     content = ""
-    with open(filename, 'r') as file:
-        content = file.read()
-    
+    with open(filename, "r") as f:
+        content = f.read()
     return content
 
 
@@ -320,10 +313,9 @@ def exercise12(filename):
     """
     # TODO: Read file line by line and count
     count = 0
-    with open(filename, 'r') as file:
-        for line in file:
+    with open(filename, "r") as f:
+        for line in f:
             count += 1
-    
     return count
 
 
@@ -345,12 +337,11 @@ def exercise13(filename):
     """
     # TODO: Read file, convert each line to int, and collect in list
     numbers = []
-    with open(filename, 'r') as file :
-        for line in file :
-            line = line.strip()
-            if line :
-                numbers.append(int(line))
+    with open(filename, "r") as f:
+        for num in f:
+            numbers.append(int(num))
     return numbers
+
 
 # ==========================================
 # EXERCISE 14: Write List to File (6 points)
@@ -373,9 +364,10 @@ def exercise14(filename, items):
     """
     # TODO: Use 'with open()' in write mode to write each item
     # HINT: how do you combine a string and a newline character?
-    with open(filename, 'w') as file :
-        for item in items :
-            file.write(item + "\n")
+    with open(filename, "w") as f:
+        for item in items:
+            f.write(item)
+            f.write("\n")
     return "Success"
 
 
@@ -403,13 +395,11 @@ def exercise15(filename, threshold):
     """
     # TODO: Read file, parse numbers, filter, and return result
     result = []
-    with open(filename, "r") as file:
-        for line in file :
-            line = line.strip()
-            if line :
-                 number = int(line)
-                 if number > threshold :
-                    result.append(number)
+    with open(filename, "r") as f:
+        for num in f:
+            num = int(num.strip())
+            if num >= threshold: 
+                result.append(num)
     return result
 
 
@@ -438,10 +428,10 @@ def exercise16(filename, letter):
     # for example: word.startswith(letter)
     count = 0
     letter = letter.lower()
-    with open (filename, "r") as file :
-        for line in file :
-            word = line.strip()
-            if word.lower().startswith(letter) :
+    with open (filename, "r") as f:
+        for line in f:
+            line = line.lower().strip()
+            if line.startswith(letter):
                 count += 1
     return count
 
