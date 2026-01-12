@@ -46,10 +46,11 @@ def extract_domain(url):
     # HINT: Split by "//" first, then by "/", handle "www." prefix
     
     # This template is intentionally incomplete - you need to add logic
-    wrong_variable = ""  # Intentional: wrong variable name
     without_protocol = url.split("://")[-1]
-    domain = without_protocol.split("/")[0]
-    return domain  # This will error - you need to define 'domain'
+    host = without_protocol.split("/")[0]
+    if host.startswith("www."):
+        host = host[4:]
+    return host
 
 
 # ==========================================
@@ -211,13 +212,17 @@ def is_valid_email(email):
     # TODO: Validate email has @ and . in correct positions
     if len(email) <= 5:
         return False
-    if "@" not in email:
+    if email.count("@") != 1:
         return False
-    at_index = email.index(".", 0)
-    if "." not in email[at_index:]:
+    
+    local, domain = email.split("@", 1)
+    if domain.startswith(".") or domain.endswith("."):
         return False
-    return True
-
+    if "." in domain:
+        return True
+    if "." in local:
+        return True
+    return False
 
 # ==========================================
 # SECTION B: JSON DATA PROCESSING (15 points)
@@ -304,7 +309,7 @@ def count_json_items(json_string, array_key):
     # TODO: Parse JSON, validate array, count items
     
     data = json.loads(json_string)
-    if array_key in data.keys():
+    if array_key in data and isinstance(data[array_key], list):
         return len(data[array_key])
     return 0
 
