@@ -44,16 +44,12 @@ def extract_domain(url):
     """
     # TODO: Remove protocol (http:// or https://), remove www., remove path
     # HINT: Split by "//" first, then by "/", handle "www." prefix
-    wrong_variable = ""
-
-    parts = url.split("//")
-    without_protocol = parts[1] if len(parts) > 1 else parts[0]
     
+    # This template is intentionally incomplete - you need to add logic
+    wrong_variable = ""  # Intentional: wrong variable name
+    without_protocol = url.split("://")[-1]
     domain = without_protocol.split("/")[0]
-    if domain.startswith("www."):
-        domain = domain[4:]
-    
-    return domain
+    return domain  # This will error - you need to define 'domain'
 
 
 # ==========================================
@@ -76,15 +72,13 @@ def parse_query_params(url):
     Hint: Split by "?" to separate query string, then split by "&" and "="
     """
     # TODO: Extract everything after "?", split by "&", then split each by "="
-    
     params = {}
     if "?" in url:
-        query_string = url.split("?", 1)[1]
-        pairs = query_string.split("&")
-        for pair in pairs:
-            if "=" in pair:
-                key, value = pair.split("=", 1)
-                params[key] = value
+        query = url.split("?")[-1]
+        pair = query.split("&")
+        for param in pair:
+            if "=" in param:
+                params[param.split("=")[0]] = param.split("=")[-1]
     return params
 
 
@@ -109,10 +103,12 @@ def count_keyword(text, keyword):
     Hint: Convert both to lowercase, use .count() or loop through .split()
     """
     # TODO: Make case-insensitive comparison
-    text = text.lower()
+    counter = 0
     keyword = keyword.lower()
-    words = text.split()  # Boşluklardan ayır
-    return words.count(keyword)
+    text = text.lower()
+    counter = text.count(keyword)
+    return counter
+
 
 # ==========================================
 # EXERCISE 4: Clean Response Data (2 points)
@@ -135,9 +131,8 @@ def clean_response(response_text):
     Hint: .strip() for edges, .split() and .join() for internal spaces
     """
     # TODO: Remove leading/trailing whitespace and collapse multiple spaces
-    result = response_text.strip()
-    result = " ".join(result.split())
-    return result
+    return (" ".join(response_text.strip().split()))
+
 
 # ==========================================
 # EXERCISE 5: Extract Status Code (2 points)
@@ -159,9 +154,9 @@ def extract_status_code(response_header):
     Hint: Split by spaces, the code is usually the second element
     """
     # TODO: Split the header and extract the numeric code
-    
     parts = response_header.split()
     code = int(parts[1])
+    
     return code
 
 
@@ -185,10 +180,13 @@ def format_timestamp(timestamp_str):
     Hint: Use .split() to separate date and time, then rejoin
     """
     # TODO: Split by "T", split time by ":", reconstruct format
-    date_part, time_part = timestamp_str.split("T")
-    hour, minute, _ = time_part.split(":")
+    
+    # Intentional: overly complex template
+    date_part = timestamp_str.strip().split("T")[0]
+    time_part = ":".join((timestamp_str.strip().split("T")[-1]).split(":")[:2])
 
-    return f"{date_part} {hour}:{minute}"
+    return (f"{date_part} {time_part}")
+
 
 # ==========================================
 # EXERCISE 7: Simple Email Validation (2 points)
@@ -202,21 +200,24 @@ def is_valid_email(email):
     
     Returns:
         bool: True if valid format, False otherwise
+    
+    Example:
+        is_valid_email("user@example.com") returns True
+        is_valid_email("invalid.email") returns False
+        is_valid_email("no@domain") returns False
+    
+    Hint: Check for "@", check for "." after "@", check length > 5
     """
+    # TODO: Validate email has @ and . in correct positions
     if len(email) <= 5:
         return False
-    if email.count("@") != 1:
+    if "@" not in email:
         return False
-    
-    local, domain = email.split("@", 1)
-    
-    if domain.startswith(".") or domain.endswith("."):
+    at_index = email.index(".", 0)
+    if "." not in email[at_index:]:
         return False
-    if "." in domain:
-        return True
-    if "." in local:
-        return True
-    return False
+    return True
+
 
 # ==========================================
 # SECTION B: JSON DATA PROCESSING (15 points)
@@ -245,14 +246,11 @@ def get_json_value(json_string, key):
     Hint: Use json.loads() to parse, then dictionary access with .get()
     """
     # TODO: Parse JSON and extract value safely
-    
-    # Intentional: will crash on invalid JSON
-    try:
-        data = json.loads(json_string)
-        return data.get(key)
-    except json.JSONDecodeError:
+    data = json.loads(json_string)
+    if key in data.keys():
+        return data[key]
+    else:
         return None
-
 
 # ==========================================
 # EXERCISE 9: Parse Nested JSON (3 points)
@@ -276,15 +274,12 @@ def get_nested_value(json_string, outer_key, inner_key):
     Hint: Parse JSON, check outer_key exists, check inner_key exists in nested dict
     """
     # TODO: Safely navigate nested structure
-    
     data = json.loads(json_string)
-    try:
-        data = json.loads(json_string)
-        if outer_key in data and isinstance(data[outer_key], dict):
-            return data[outer_key].get(inner_key)
-        return None
-    except json.JSONDecodeError:
-        return None
+    if outer_key in data.keys():
+        if inner_key in data.get(outer_key):
+            return data[outer_key][inner_key]
+    return None
+
 
 # ==========================================
 # EXERCISE 10: Count JSON Array Items (3 points)
@@ -308,13 +303,11 @@ def count_json_items(json_string, array_key):
     """
     # TODO: Parse JSON, validate array, count items
     
-    try:
-        data = json.loads(json_string)
-        if array_key in data and isinstance(data[array_key], list):
-            return len(data[array_key])
-        return 0
-    except json.JSONDecodeError:
-        return 0
+    data = json.loads(json_string)
+    if array_key in data.keys():
+        return len(data[array_key])
+    return 0
+
 
 # ==========================================
 # EXERCISE 11: Extract All Values for Key (3 points)
@@ -338,17 +331,12 @@ def extract_all_values(json_string, key):
     """
     # TODO: Parse JSON array and extract key from each object
     
-    try:
-        data = json.loads(json_string)
-        results = []
-        for item in data:
-            if isinstance(item, dict) and key in item:
-                results.append(item[key])
-        return results
-    except json.JSONDecodeError:
-        return []
-    
-    # Missing return statement
+    data = json.loads(json_string)
+    results = []
+    for item in data:
+        if key in item.keys():
+            results.append(item[key])
+    return results
 
 
 # ==========================================
@@ -372,19 +360,14 @@ def calculate_json_average(json_string, key):
     Hint: Extract all values for key, sum them, divide by count
     """
     # TODO: Extract numeric values and calculate average
-    try:
-        data = json.loads(json_string)
-        total = 0
-        count = 0
-        for item in data:
-            if isinstance(item, dict) and key in item:
-                value = item[key]
-                if isinstance(value, (int, float)):
-                    total += value
-                    count += 1
-        return total / count if count > 0 else 0.0
-    except json.JSONDecodeError:
-        return 0.0
+    data = json.loads(json_string)
+    total = 0
+    count = 0
+    for item in data:
+        if key in item:
+            total += item[key]
+            count += 1
+    return total / count
 
 
 # ==========================================
@@ -415,13 +398,10 @@ def fix_json(broken_json):
     """
     # TODO: Fix common JSON issues before parsing
     fixed = broken_json.replace("'", '"')
+    fixed = fixed.replace(",}", "}")
+    fixed = fixed.replace(",]", "]")
+    return json.loads(fixed)
 
-    fixed = fixed.replace(",}", "}").replace(",]", "]")
-    
-    try:
-        return json.loads(fixed)
-    except json.JSONDecodeError:
-        return None
 
 # ==========================================
 # EXERCISE 14: Parse CSV-Like String (5 points)
@@ -448,17 +428,16 @@ def parse_csv_string(csv_string):
     """
     # TODO: Parse CSV format into structured data
     lines = csv_string.split('\n')
-    if not lines:
-        return []
-    
     headers = lines[0].split(',')
     results = []
     
     for line in lines[1:]:
-        if line.strip() == "":
-            continue  # skip empty lines
+        if not line.strip():
+            continue
         values = line.split(',')
-        row_dict = dict(zip(headers, values))
+        row_dict = {}
+        for i in range(len(headers)):
+            row_dict[headers[i]] = values[i]
         results.append(row_dict)
     
     return results
@@ -498,29 +477,17 @@ def process_api_response(response_string):
         "data": None,
         "count": None
     }
-    
     parts = response_string.split(" | ")
-    
     for part in parts:
-        part = part.strip()
-        if part.startswith("STATUS:"):
-            try:
-                result["status"] = int(part.split(":", 1)[1].strip())
-            except ValueError:
-                result["status"] = None
-        elif part.startswith("DATA:"):
-            try:
-                json_str = part.split(":", 1)[1].strip()
-                result["data"] = json.loads(json_str)
-            except json.JSONDecodeError:
-                result["data"] = None
-        elif part.startswith("COUNT:"):
-            try:
-                result["count"] = int(part.split(":", 1)[1].strip())
-            except ValueError:
-                result["count"] = None
-
+        key, value = part.split(": ", 1)
+        if key == "STATUS":
+            result["status"] = int(value)
+        elif key == "DATA":
+            result["data"] = json.loads(value)
+        elif key == "COUNT":
+            result["count"] = int(value)
     return result
+
 
 # ==========================================
 # DO NOT MODIFY BELOW THIS LINE
