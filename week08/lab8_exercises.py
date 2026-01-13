@@ -26,161 +26,80 @@ import matplotlib.pyplot as plt
 #           ["datetime", "year", "month", "day", "day_name", "is_leap_year"]
 #   Description:
 #       Convert each string to datetime and add datetime-based features.
-def parse_and_enrich_dates(date_strings):
-	"""Convert date strings to a DataFrame with datetime features.
-
-	Returns DataFrame with columns in this order:
-	["datetime", "year", "month", "day", "day_name", "is_leap_year"]
-	"""
-	dt = pd.to_datetime(date_strings, errors="coerce")
-	df = pd.DataFrame({"datetime": dt})
-	df["year"] = df["datetime"].dt.year
-	df["month"] = df["datetime"].dt.month
-	df["day"] = df["datetime"].dt.day
-	df["day_name"] = df["datetime"].dt.day_name()
-	# pandas 1.3+ has is_leap_year
-	try:
-		df["is_leap_year"] = df["datetime"].dt.is_leap_year
-	except Exception:
-		# fallback: compute via year
-		df["is_leap_year"] = df["year"].apply(lambda y: (y % 4 == 0 and (y % 100 != 0 or y % 400 == 0)))
-
-	return df[["datetime", "year", "month", "day", "day_name", "is_leap_year"]]
 #       Preserve input order.
 #   Note:
-def make_line_plot(x, y, title):
-	fig, ax = plt.subplots()
-	ax.plot(x, y)
-	ax.set_xlabel("x")
-	ax.set_ylabel("y")
-	ax.set_title(title)
-	return fig, ax
 #       date_strings may include both "YYYY-MM-DD" and "YYYY-MM-DD HH:MM" formats.
 #   IMPORTANT:
-def make_histogram(values):
-	fig, ax = plt.subplots()
-	ax.hist(values, bins=10)
-	ax.set_title("Value Distribution")
-	return fig, ax
 #       Function name MUST be exactly "parse_and_enrich_dates".
 
-def plot_category_counts(df):
-	counts = df["category"].value_counts()
-	fig, ax = plt.subplots()
-	counts.plot(kind="bar", ax=ax)
-	ax.set_title("Category Counts")
-	return fig, ax
+
+def parse_and_enrich_dates(date_strings):
+    """Convert date strings to datetime and extract features."""
+    dates = pd.to_datetime(date_strings, format='mixed')
+    df = pd.DataFrame({
+        "datetime": dates,
+        "year": dates.year,
+        "month": dates.month,
+        "day": dates.day,
+        "day_name": dates.day_name(),
+        "is_leap_year": dates.is_leap_year
+    })
+    return df
+
 
 # ==========================================
-def pandas_line_plot(df):
-	# pandas returns an Axes object
-	ax = df.plot(x="x", y="y")
-	return ax
 # EXERCISE 2: Week 7 Reminder - OO Line Plot (2 points)
 # ==========================================
 # TODO:
 #   Function Name: make_line_plot
 #   Parameters:
 #       x (list): x-values
-def daily_totals(df):
-	df2 = df.copy()
-	df2["timestamp"] = pd.to_datetime(df2["timestamp"])
-	df2["date"] = df2["timestamp"].dt.date
-	grouped = df2.groupby("date", sort=True, as_index=False)["value"].sum()
-	grouped = grouped.rename(columns={"value": "total"})
-	# Ensure sorted by date ascending
-	grouped = grouped.sort_values(by="date").reset_index(drop=True)
-	return grouped[["date", "total"]]
 #       y (list): y-values
 #       title (str): plot title
 #   Returns:
-def plot_and_save_line(x, y, out_file):
-	fig, ax = plt.subplots()
-	ax.plot(x, y)
-	fig.savefig(out_file)
-	return fig, ax
 #       tuple: (fig, ax) from matplotlib
 #   Description:
 #       Create a line plot using Matplotlib object-oriented API (plt.subplots()).
 #       Set xlabel="x", ylabel="y" and set the given title.
-def plot_on_existing_ax(df, ax):
-	df2 = df.copy()
-	df2["Sale Date"] = pd.to_datetime(df2["Sale Date"])
-	# Use pandas plotting on provided ax
-	returned_ax = df2.plot(x="Sale Date", y="Total Sales", ax=ax)
-	returned_ax.set_title("Total Sales Over Time")
-	return returned_ax
 #       Do NOT call plt.show().
 #   IMPORTANT:
 #       Function name MUST be exactly "make_line_plot".
-def histogram_with_bins(df, bins):
-	fig, ax = plt.subplots()
-	ax.hist(df["value"], bins=bins)
-	ax.set_title("Histogram")
-	return fig, ax
 
 
-def simple_subplots(x, y):
-	fig, axes = plt.subplots(nrows=2, ncols=1, sharex=True)
-	# Top: line
-	axes[0].plot(x, y)
-	# Bottom: histogram
-	axes[1].hist(y, bins=10)
-	return fig, axes
+def make_line_plot(x, y, title):
+    """Create a line plot with matplotlib OO API."""
+    fig, ax = plt.subplots()
+    ax.plot(x, y)
+    ax.set_xlabel("x")
+    ax.set_ylabel("y")
+    ax.set_title(title)
+    return fig, ax
+
+
 # ==========================================
 # EXERCISE 3: Lab 8 - Histogram Basics (2 points)
 # ==========================================
 # TODO:
 #   Function Name: make_histogram
 #   Parameters:
-def plot_sales_dashboard(df, out_file):
-	df2 = df.copy()
-	df2["date"] = pd.to_datetime(df2["date"])
-	fig, axes = plt.subplots(nrows=2, ncols=1, sharex=True)
-	axes[0].plot(df2["date"], df2["sales"])
-	axes[1].hist(df2["sales"], bins=10)
-	fig.savefig(out_file)
-	return fig, axes
 #       values (list): list of numeric values
 #   Returns:
 #       tuple: (fig, ax)
-def weekly_mean(df):
-	df2 = df.copy()
-	df2["timestamp"] = pd.to_datetime(df2["timestamp"])
-	df2 = df2.set_index("timestamp")
-	weekly = df2.resample("W")["value"].mean().reset_index()
-	weekly = weekly.rename(columns={"timestamp": "week", "value": "mean_value"})
-	return weekly[["week", "mean_value"]]
 #   Description:
 #       Create a histogram using Matplotlib OO API with bins=10.
 #       Set title EXACTLY: "Value Distribution".
-def top_n_days_by_total(df, n):
-	df2 = df.copy()
-	df2["timestamp"] = pd.to_datetime(df2["timestamp"])
-	df2["date"] = df2["timestamp"].dt.date
-	grouped = df2.groupby("date", as_index=False)["value"].sum()
-	grouped = grouped.rename(columns={"value": "total"})
-	grouped = grouped.sort_values(by="total", ascending=False).reset_index(drop=True)
-	return grouped[["date", "total"]].head(n)
 #       Do NOT call plt.show().
 #   IMPORTANT:
-def compare_two_metrics(df):
-	fig, axes = plt.subplots(nrows=2, ncols=1, sharex=True)
-	axes[0].plot(df["a"])
-	axes[1].plot(df["b"])
-	return fig, axes
 #       Function name MUST be exactly "make_histogram".
 #       Title must match exactly.
-def plot_date_range(df, start_date, end_date):
-	df2 = df.copy()
-	df2["timestamp"] = pd.to_datetime(df2["timestamp"])
-	start = pd.to_datetime(start_date)
-	end = pd.to_datetime(end_date)
-	mask = (df2["timestamp"] >= start) & (df2["timestamp"] <= end)
-	filtered = df2.loc[mask]
-	fig, ax = plt.subplots()
-	ax.plot(filtered["timestamp"], filtered["value"]) 
-	return fig, ax
+
+
+def make_histogram(values):
+    """Create a histogram with matplotlib OO API."""
+    fig, ax = plt.subplots()
+    ax.hist(values, bins=10)
+    ax.set_title("Value Distribution")
+    return fig, ax
 
 
 # ==========================================
@@ -201,6 +120,15 @@ def plot_date_range(df, start_date, end_date):
 #       Title must match exactly.
 
 
+def plot_category_counts(df):
+    """Plot category counts as a bar chart."""
+    counts = df["category"].value_counts()
+    fig, ax = plt.subplots()
+    ax.bar(counts.index, counts.values)
+    ax.set_title("Category Counts")
+    return fig, ax
+
+
 # ==========================================
 # EXERCISE 5: Lab 8 - Pandas Line Plot (2 points)
 # ==========================================
@@ -216,6 +144,12 @@ def plot_date_range(df, start_date, end_date):
 #       Do NOT call plt.show().
 #   IMPORTANT:
 #       Function name MUST be exactly "pandas_line_plot".
+
+
+def pandas_line_plot(df):
+    """Create a line plot using pandas plotting."""
+    ax = df.plot(x="x", y="y", kind="line")
+    return ax
 
 
 # ==========================================
@@ -240,6 +174,17 @@ def plot_date_range(df, start_date, end_date):
 #       Output columns must match exactly.
 
 
+def daily_totals(df):
+    """Aggregate values by date (daily totals)."""
+    df_copy = df.copy()
+    df_copy["timestamp"] = pd.to_datetime(df_copy["timestamp"])
+    df_copy["date"] = df_copy["timestamp"].dt.date
+    result = df_copy.groupby("date")["value"].sum().reset_index()
+    result.columns = ["date", "total"]
+    result = result.sort_values("date")
+    return result
+
+
 # ==========================================
 # EXERCISE 7: Line Plot + Save to File (3 points)
 # ==========================================
@@ -257,6 +202,14 @@ def plot_date_range(df, start_date, end_date):
 #   IMPORTANT:
 #       Function name MUST be exactly "plot_and_save_line".
 #       Must save the figure to the given path.
+
+
+def plot_and_save_line(x, y, out_file):
+    """Create a line plot and save it to a file."""
+    fig, ax = plt.subplots()
+    ax.plot(x, y)
+    fig.savefig(out_file)
+    return fig, ax
 
 
 # ==========================================
@@ -280,6 +233,15 @@ def plot_date_range(df, start_date, end_date):
 #       Title must match exactly.
 
 
+def plot_on_existing_ax(df, ax):
+    """Plot on an existing matplotlib axes."""
+    df_copy = df.copy()
+    df_copy["Sale Date"] = pd.to_datetime(df_copy["Sale Date"])
+    df_copy.plot(x="Sale Date", y="Total Sales", ax=ax, legend=False)
+    ax.set_title("Total Sales Over Time")
+    return ax
+
+
 # ==========================================
 # EXERCISE 9: Histogram with Custom Bins (3 points)
 # ==========================================
@@ -299,6 +261,14 @@ def plot_date_range(df, start_date, end_date):
 #       Title must match exactly.
 
 
+def histogram_with_bins(df, bins):
+    """Create a histogram with custom bins."""
+    fig, ax = plt.subplots()
+    ax.hist(df["value"], bins=bins)
+    ax.set_title("Histogram")
+    return fig, ax
+
+
 # ==========================================
 # EXERCISE 10: Simple Subplots (3 points)
 # ==========================================
@@ -316,6 +286,19 @@ def plot_date_range(df, start_date, end_date):
 #       Do NOT call plt.show().
 #   IMPORTANT:
 #       Function name MUST be exactly "simple_subplots".
+
+
+def simple_subplots(x, y):
+    """Create 2 subplots: line plot and histogram."""
+    fig, axes = plt.subplots(nrows=2, ncols=1, sharex=True)
+    
+    # Top subplot: line plot
+    axes[0].plot(x, y)
+    
+    # Bottom subplot: histogram
+    axes[1].hist(y, bins=10)
+    
+    return fig, axes
 
 
 # ==========================================
@@ -343,6 +326,28 @@ def plot_date_range(df, start_date, end_date):
 #       Must save figure.
 
 
+def plot_sales_dashboard(df, out_file):
+    """Create a sales dashboard with line plot and histogram."""
+    fig, axes = plt.subplots(nrows=2, ncols=1)
+    
+    # Convert date to datetime
+    df_copy = df.copy()
+    df_copy["date"] = pd.to_datetime(df_copy["date"])
+    
+    # Row 1: line plot of sales over date
+    axes[0].plot(df_copy["date"], df_copy["sales"])
+    axes[0].set_title("Sales Over Time")
+    
+    # Row 2: histogram of sales
+    axes[1].hist(df_copy["sales"], bins=10)
+    axes[1].set_title("Sales Distribution")
+    
+    # Save the figure
+    fig.savefig(out_file)
+    
+    return fig, axes
+
+
 # ==========================================
 # EXERCISE 12: Weekly Mean with DateTimeIndex (5 points)
 # ==========================================
@@ -358,6 +363,24 @@ def plot_date_range(df, start_date, end_date):
 #   IMPORTANT:
 #       Function name MUST be exactly "weekly_mean".
 #       Output columns must match exactly.
+
+
+def weekly_mean(df):
+    """Compute weekly mean values using resampling."""
+    df_copy = df.copy()
+    df_copy["timestamp"] = pd.to_datetime(df_copy["timestamp"])
+    df_copy = df_copy.set_index("timestamp")
+    
+    # Resample by week and compute mean
+    weekly = df_copy["value"].resample("W").mean()
+    
+    # Convert back to DataFrame with required columns
+    result = pd.DataFrame({
+        "week": weekly.index,
+        "mean_value": weekly.values
+    })
+    
+    return result
 
 
 # ==========================================
@@ -378,6 +401,22 @@ def plot_date_range(df, start_date, end_date):
 #       Output columns must match exactly.
 
 
+def top_n_days_by_total(df, n):
+    """Get top N days by total value."""
+    df_copy = df.copy()
+    df_copy["timestamp"] = pd.to_datetime(df_copy["timestamp"])
+    df_copy["date"] = df_copy["timestamp"].dt.date
+    
+    # Group by date and sum
+    daily = df_copy.groupby("date")["value"].sum().reset_index()
+    daily.columns = ["date", "total"]
+    
+    # Sort descending and get top N
+    daily = daily.sort_values("total", ascending=False).head(n)
+    
+    return daily
+
+
 # ==========================================
 # EXERCISE 14: Compare Two Metrics (5 points)
 # ==========================================
@@ -394,6 +433,21 @@ def plot_date_range(df, start_date, end_date):
 #       Do NOT call plt.show().
 #   IMPORTANT:
 #       Function name MUST be exactly "compare_two_metrics".
+
+
+def compare_two_metrics(df):
+    """Compare two metrics in separate subplots."""
+    fig, axes = plt.subplots(nrows=2, ncols=1, sharex=True)
+    
+    # Plot metric a
+    axes[0].plot(df["a"])
+    axes[0].set_title("Metric A")
+    
+    # Plot metric b
+    axes[1].plot(df["b"])
+    axes[1].set_title("Metric B")
+    
+    return fig, axes
 
 
 # ==========================================
@@ -414,3 +468,22 @@ def plot_date_range(df, start_date, end_date):
 #       Do NOT call plt.show().
 #   IMPORTANT:
 #       Function name MUST be exactly "plot_date_range".
+
+
+def plot_date_range(df, start_date, end_date):
+    """Plot values within a date range."""
+    df_copy = df.copy()
+    df_copy["timestamp"] = pd.to_datetime(df_copy["timestamp"])
+    
+    # Filter by date range (inclusive)
+    start = pd.to_datetime(start_date)
+    end = pd.to_datetime(end_date)
+    filtered = df_copy[(df_copy["timestamp"] >= start) & (df_copy["timestamp"] <= end)]
+    
+    # Create line plot
+    fig, ax = plt.subplots()
+    ax.plot(filtered["timestamp"], filtered["value"])
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Value")
+    
+    return fig, ax
