@@ -35,8 +35,7 @@ def clean_filename(filename):
     """
     # TODO: Implement the cleaning logic using basic string methods.
     #Important: Function name MUST be 'clean_filename'.
-    return filename.strip().lower()
-
+    return(filename.strip().lower())
 
 
 # ==========================================
@@ -58,9 +57,9 @@ def merge_dicts(dict1, dict2):
     # TODO: Implement the merge without modifying the original dictionaries.
     # IMPORTANT: Function name MUST be exactly "merge_dicts"
     # Hint: Consider how to create a new dictionary and combine key-value pairs.
-    result = dict1.copy()
-    result.update(dict2)
-    return result
+    dicts = dict1.copy()
+    dicts.update(dict2)
+    return dicts
 
 
 # ==========================================
@@ -83,9 +82,11 @@ def filter_by_length(strings, min_len):
     """
     # TODO: Implement the filter. Ensure the original list remains unchanged.
     # IMPORTANT: Function name MUST be exactly "filter_by_length"
-    return [s for s in strings if len(s) >= min_len]
-
-
+    ret = []
+    for item in strings:
+        if len(item) >= min_len:
+            ret.append(item)
+    return ret
 
 
 # ==========================================
@@ -106,12 +107,11 @@ def filter_by_length(strings, min_len):
 # Student writes the class here
 class Person:
     def __init__(self, name, age):
-        self.name = name
-        self.age = age
-    
-    def get_info(self):
-        return f"Name: {self.name}, Age: {self.age}"
+       self.name = name
+       self.age = age
 
+    def get_info(self):
+       return (f"Name: {self.name}, Age: {self.age}")
 
 
 
@@ -141,21 +141,19 @@ class Person:
 # NOTE: This exercise is independent.
 # If a Shape class was created in Exercise 4, DO NOT reuse it. You must rewrite a fresh Shape class here.
 # Student writes both classes here
+
 class Shape:
     def __init__(self, color):
         self.color = color
-    
     def get_info(self):
-        return f"Shape color: {self.color}"
+        return (f"Shape color: {self.color}")
 
 class Circle(Shape):
     def __init__(self, color, radius):
         super().__init__(color)
         self.radius = radius
-    
     def get_info(self):
-        return f"Circle color: {self.color}, Radius: {self.radius}"
-
+        return (f"Circle color: {self.color}, Radius: {self.radius}")
 
 
 # ==========================================
@@ -181,12 +179,10 @@ class Circle(Shape):
 class Device:
     def get_sound(self):
         return None
-
+    
 class Smartphone(Device):
     def get_sound(self):
         return "Ring!"
-
-
 
 
 # ==========================================
@@ -225,13 +221,12 @@ class Product:
         self.name = name
         self.price = price
         self.quantity = quantity
-    
-    def get_total_value(self):
-        return self.price * self.quantity
-    
-    def apply_discount(self, percent):
-        self.price = self.price * (1 - percent / 100)
 
+    def get_total_value(self):
+        return(self.price * self.quantity)
+
+    def apply_discount(self, percent):
+        self.price = self.price - (self.price * (percent / 100))
 
 
 
@@ -272,20 +267,22 @@ class ClothingItem:
         self.quantity = quantity
     
     def calculate_price(self):
-        return self.price * self.quantity
+        return(self.price * self.quantity)
 
 class Shoe(ClothingItem):
     def __init__(self, name, price, quantity, brand, size):
         super().__init__(name, price, quantity)
         self.brand = brand
         self.size = size
-    
-    def calculate_price(self):
-        base_price = super().calculate_price()
-        # Add surcharge: +5 for each size above 40
-        surcharge = max(0, self.size - 40) * 5
-        return base_price + surcharge
 
+    def calculate_price(self):
+        total = self.price * self.quantity
+        if self.size > 40:
+            total += (self.size - 40) * 5 * self.quantity
+        premium_brands = ["Nike", "Adidas", "Puma"]
+        if self.brand in premium_brands:
+            total += 10 * self.quantity
+        return total
 
 
 # ==========================================
@@ -310,19 +307,16 @@ class Shoe(ClothingItem):
 # Write your BankAccount class below:
 class BankAccount:
     def __init__(self, initial_balance):
-        self._balance = initial_balance
+        self.__balance = initial_balance
     
     def deposit(self, amount):
-        self._balance += amount
-    
+        self.__balance += amount
+
     def withdraw(self, amount):
-        if amount <= self._balance:
-            self._balance -= amount
-    
+        self.__balance -= amount
+
     def get_balance(self):
-        return self._balance
-
-
+        return (self.__balance)
 
 
 # ==========================================
@@ -360,15 +354,17 @@ class AnimalBase:
 
 class Dog(AnimalBase):
     def speak(self):
-        return "Woof!"
+        return ("Woof!")
 
 class Cat(AnimalBase):
     def speak(self):
-        return "Meow!"
+        return ("Meow!")
 
 def animal_concert(animals):
-    return [animal.speak() for animal in animals]
-
+    sounds = []
+    for animal in animals:
+        sounds.append(animal.speak())
+    return sounds
 
 
 # ==========================================
@@ -392,16 +388,14 @@ def animal_concert(animals):
 # Write your Employee class below:
 class Employee:
     _total_employees = 0
-    
     def __init__(self, name, salary):
         self.name = name
         self.salary = salary
         Employee._total_employees += 1
-    
+
     @classmethod
     def get_total_employees(cls):
-        return cls._total_employees
-
+        return (cls._total_employees)
     
 
 
@@ -429,13 +423,12 @@ class Point:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-    
-    def __str__(self):
-        return f"Point at ({self.x}, {self.y})"
-    
-    def __repr__(self):
-        return f"Point({self.x}, {self.y})"
 
+    def __str__(self):
+        return (f"Point at {self.x}, {self.y}")
+
+    def __repr__(self):
+        return (f"Point({self.x}, {self.y})")
 
 
 # ==========================================
@@ -479,18 +472,17 @@ class Rectangle:
     def __init__(self, width, height):
         self.__width = width
         self.__height = height
-    
+
     def set_dimensions(self, width, height):
         if width > 0 and height > 0:
             self.__width = width
             self.__height = height
-    
-    def get_area(self):
-        return self.__width * self.__height
-    
-    def get_perimeter(self):
-        return 2 * (self.__width + self.__height)
 
+    def get_area(self):
+        return (self.__width * self.__height)
+
+    def get_perimeter(self):
+        return (2 * (self.__width + self.__height))
 
 
 
@@ -526,19 +518,16 @@ class Rectangle:
 # Write your Counter class below:
 class Counter:
     _count = 0
-    
     def __init__(self):
         Counter._count += 1
     
     @classmethod
     def get_instance_count(cls):
-        return cls._count
+        return (cls._count)
     
     @staticmethod
     def is_even(number):
-        return number % 2 == 0
-
-
+        return(number % 2 == 0)
 
 
 # ==========================================
@@ -574,7 +563,7 @@ class Furniture:
     def __init__(self, style, material):
         self.style = style
         self.material = material
-    
+
     def describe(self):
         return f"Furniture: style={self.style}, material={self.material}"
 
@@ -582,10 +571,9 @@ class Chair(Furniture):
     def __init__(self, style, material, num_legs):
         super().__init__(style, material)
         self.num_legs = num_legs
-    
+
     def describe(self):
         return f"Chair: style={self.style}, material={self.material}, legs={self.num_legs}"
-
 
 
 # ==========================================
@@ -625,20 +613,19 @@ class Chair(Furniture):
 class Engine:
     def __init__(self, horsepower):
         self.horsepower = horsepower
-    
+
     def activate(self):
         return f"Engine with {self.horsepower}HP started"
+
 
 class Car:
     def __init__(self, brand, engine_horsepower):
         self.brand = brand
         self.engine = Engine(engine_horsepower)
-    
+
     def start(self):
-        engine_activation = self.engine.activate()
-        return f"{self.brand} car: {engine_activation}"
-
-
+        engine_status = self.engine.activate()
+        return f"{self.brand} car: {engine_status}"
 
 
 # ==========================================
